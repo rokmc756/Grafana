@@ -1,0 +1,34 @@
+---
+- name: Check OS ( Exporters )
+  fail: msg="Not a Red Hat based system!"
+  when: ansible_os_family != 'RedHat' or ansible_os_family != 'CentOS' or  ansible_os_family != 'Rocky'
+
+
+- name: Set Facts for Network and Packages Informations for Linux Distribution
+  import_tasks: set-facts.yml
+  tags: setup, install, uninstall, enable, disable, create, delete
+
+
+- name: Install Node Exporter
+  import_tasks: install-node-exporter.yml
+  tags: install, create
+  when: (( node is defined and node == true ) or ( exporter_all is defined and exporter_all == true )) and inventory_hostname in groups['workers']
+
+
+- name: Uninstall Node Exporter
+  import_tasks: uninstall-node-exporter.yml
+  tags: uninstall, delete
+  when: (( node is defined and node == true ) or ( exporter_all is defined and exporter_all == true )) and inventory_hostname in groups['workers']
+
+
+- name: Install Cassandra Exporter
+  import_tasks: install-cassandra-exporter.yml
+  tags: install, create
+  when: (( cassandra is defined and cassandra == true ) or ( exporter_all is defined and exporter_all == true ))
+
+
+- name: Uninstall Cassandra Exporter
+  import_tasks: uninstall-cassandra-exporter.yml
+  tags: uninstall, delete
+  when: (( cassandra is defined and cassandra == true ) or ( exporter_all is defined and exporter_all == true ))
+

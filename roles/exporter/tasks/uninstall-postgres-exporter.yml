@@ -1,0 +1,37 @@
+---
+- name: Stop and Disable Prometheus and Postgres_Exporter Services
+  systemd:
+    daemon_reexec: true
+    daemon_reload: true
+    name: "{{ item }}"
+    enabled: false
+    state: stopped
+  ignore_errors: true
+  register: stop_prometheus_services
+  with_items:
+    - postgres_exporter
+
+
+- name: Delete the Prometheus & Postgres_Exporter Config and Binary Files
+  file: path={{ item.dest }} state=absent
+  ignore_errors: true
+  register: delete_config_files
+  with_items:
+    - { src: "postgres_exporter.systemd.j2",   dest: "/etc/systemd/system/postgres_exporter.service" }
+    - { src: "postgres_exporter binary",       dest: "/usr/local/bin/postgres_exporter" }
+    - { src: "postgres_exporter tar file",     dest: "/root/postgres_exporter-{{ _postgres_exporter.major_version }}.{{ _postgres_exporter.minor_version }}.{{ _postgres_exporter.patch_version }}.linux-amd64" }
+    - { src: "postgres_exporter directory",    dest: "/root/postgres_exporter-{{ _postgres_exporter.major_version }}.{{ _postgres_exporter.minor_version }}.{{ _postgres_exporter.patch_version }}.linux-amd64" }
+
+
+- name: Uninstall Dependent and Grafana RPM Packages
+  yum:
+    name: "{{ item }}"
+    state: absent
+  async: 120
+  poll: 5
+  register: uninstall_deps_pkgs
+  ignore_errors: true
+  with_items:
+    - postgresql-contrib
+    - postgresql-devel
+

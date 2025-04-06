@@ -1,0 +1,48 @@
+---
+- name: Check if the GO File Already Exists
+  stat: path={{ _go.base_path }}/go{{ _go.major_version }}.{{ _go.minor_version }}.{{ _go.patch_version }}.linux-amd64.tar.gz
+  register: check_go_file
+
+
+- name: Check if the GO Binary Already Exists
+  stat: path=/usr/local/go/bin/go
+  register: check_go_bin
+
+
+- name: Copy the GO File
+  copy: src=go{{ _go.major_version }}.{{ _go.minor_version }}.{{ _go.patch_version }}.linux-amd64.tar.gz dest={{ _go.base_path }}/go{{ _go.major_version }}.{{ _go.minor_version }}.{{ _go.patch_version }}.linux-amd64.tar.gz mode=0644 owner=root group=root
+  register: copy_go_file
+  when: check_go_file.stat.exists != True
+
+
+- name: Download GO File if Copy Fails
+  shell: wget https://dl.google.com/go/go{{ _go.major_version }}.{{ _go.minor_version }}.{{ _go.patch_version }}.linux-amd64.tar.gz -P {{ _go.base_path }}
+  args:
+    executable: /bin/bash
+  when: copy_go_file is not succeeded
+
+
+#- name: Download GO File if Copy Fails
+#  get_url:
+#    url: "{{ item.url }}"
+#    dest: "{{ item.dest }}"
+#  with_items:
+#    - { url: "{{ _go.download_url }}/go{{ _go.major_version }}.{{ _go.minor_version }}.{{ _go.patch_version }}.linux-amd64.tar.gz",
+#        dest: "{{ local_dir }}/roles/grafana/files/go{{ _go.major_version }}.{{ _go.minor_version }}.{{ _go.patch_version }}.linux-amd64.tar.gz" }
+#  when: copy_go_file is not succeeded
+
+
+- name: Untar GO File
+  # become: true
+  shell: tar -C /usr/local -xf {{ _go.base_path }}/go{{ _go.major_version }}.{{ _go.minor_version }}.{{ _go.patch_version }}.linux-amd64.tar.gz
+  args:
+    executable: /bin/bash
+  when: check_go_bin.stat.exists != True
+
+
+- name: Insert Executable Go Binary Path into .bashrc
+  lineinfile:
+    path: "{{ _go.base_path }}/.bashrc"
+    line: "export PATH=/usr/local/go/bin:$PATH"
+  register: add_go_bin_path_inline
+

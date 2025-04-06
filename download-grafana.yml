@@ -1,0 +1,42 @@
+---
+- hosts: localhost
+  tasks:
+    - name: Download Software Binaries and Save the into Ansible Files Directory
+      become: true
+      vars:
+        go_download_version: "{{ _go.major_version }}.{{ _go.minor_version }}.{{ _go.patch_version }}"
+        grafana_download_version: "{{ _grafana.major_version }}.{{ _grafana.minor_version }}.{{ _grafana.patch_version }}"
+        prometheus_download_version: "{{ _prometheus.major_version }}.{{ _prometheus.minor_version }}.{{ _prometheus.patch_version }}"
+        local_dir: "/home/jomoon/Grafana"
+      get_url:
+        url: "{{ item.url }}"
+        dest: "{{ item.dest }}"
+      with_items:
+        - { url: "{{ _go.download_url }}/go{{ _go.major_version }}.{{ _go.minor_version }}.{{ _go.patch_version }}.linux-amd64.tar.gz",
+            dest: "{{ local_dir }}/roles/grafana/files/go{{ _go.major_version }}.{{ _go.minor_version }}.{{ _go.patch_version }}.linux-amd64.tar.gz" }
+        - { url: "{{ _go.download_url }}/go{{ _go.major_version }}.{{ _go.minor_version }}.{{ _go.patch_version }}.linux-amd64.tar.gz",
+            dest: "{{ local_dir }}/roles/prometheus/files/go{{ _go.major_version }}.{{ _go.minor_version }}.{{ _go.patch_version }}.linux-amd64.tar.gz" }
+        - { url: "{{ _prometheus.download_url }}/v{{ prometheus_download_version }}/prometheus-{{ prometheus_download_version }}.linux-amd64.tar.gz",
+            dest: "{{ local_dir }}/roles/prometheus/files/prometheus-{{ prometheus_download_version }}.linux-amd64.tar.gz" }
+        - { url: "{{ _exporter.jmx.download_url }}/{{ _exporter.jmx.version }}/jmx_prometheus_standalone-{{ _exporter.jmx.version }}.jar",
+            dest: "{{ local_dir }}/roles/prometheus/files/jmx_prometheus_standalone-{{ _exporter.jmx.version }}.jar" }
+        - { url: "{{ _exporter.jmx.download_url }}/{{ _exporter.jmx.version }}/jmx_prometheus_javaagent-{{ _exporter.jmx.version }}.jar",
+            dest: "{{ local_dir }}/roles/prometheus/files/jmx_prometheus_javaagent-{{ _exporter.jmx.version }}.jar" }
+        - { url: "{{ _exporter.postgres.download_url }}/v{{ _exporter.postgres.version }}/postgres_exporter-{{ _exporter.postgres.version }}.linux-amd64.tar.gz",
+            dest: "{{ local_dir }}/roles/prometheus/files/postgres_exporter-{{ _exporter.postgres.version }}.linux-amd64.tar.gz" }
+        - { url: "{{ _exporter.cassandra.download_url }}/{{ _exporter.cassandra.version }}/cassandra_exporter-{{ _exporter.cassandra.version }}.jar",
+            dest: "{{ local_dir }}/roles/prometheus/files/cassandra_exporter-{{ _exporter.cassandra.version }}.jar" }
+        - { url: "{{ _exporter.node.download_url }}/v{{ _exporter.node.version }}/node_exporter-{{ _exporter.node.version }}.linux-amd64.tar.gz",
+            dest: "{{ local_dir }}/roles/prometheus/files/node_exporter-{{ _exporter.node.version }}.linux-amd64.tar.gz" }
+        - { url: "{{ _exporter.mysqld.download_url }}/v{{ _exporter.mysqld.version }}/mysqld_exporter-{{ _exporter.mysqld.version }}.linux-amd64.tar.gz",
+            dest: "{{ local_dir }}/roles/prometheus/files/mysqld_exporter-{{ _exporter.mysqld.version }}.linux-amd64.tar.gz" }
+        - { url: "{{ _exporter.memcached.download_url }}/v{{ _exporter.memcached.version }}/memcached_exporter-{{ _exporter.memcached.version }}.linux-amd64.tar.gz",
+            dest: "{{ local_dir }}/roles/prometheus/files/memcached_exporter-{{ _exporter.memcached.version }}.linux-amd64.tar.gz" }
+        - { url: "{{ _exporter.influxdb.download_url }}/v{{ _exporter.influxdb.version }}/influxdb_exporter-{{ _exporter.influxdb.version }}.linux-amd64.tar.gz",
+            dest: "{{ local_dir }}/roles/prometheus/files/influxdb_exporter-{{ _exporter.influxdb.version }}.linux-amd64.tar.gz" }
+        - { url: "{{ _exporter.collectd.download_url }}/v{{ _exporter.collectd.version }}/collectd_exporter-{{ _exporter.collectd.version }}.linux-amd64.tar.gz",
+            dest: "{{ local_dir }}/roles/prometheus/files/collectd_exporter-{{ _exporter.collectd.version }}.linux-amd64.tar.gz" }
+        - { url: "{{ _exporter.graphite.download_url }}/v{{ _exporter.graphite.version }}/graphite_exporter-{{ _exporter.graphite.version }}.linux-amd64.tar.gz",
+            dest: "{{ local_dir }}/roles/prometheus/files/graphite_exporter-{{ _exporter.graphite.version }}.linux-amd64.tar.gz" }
+      tags: download
+

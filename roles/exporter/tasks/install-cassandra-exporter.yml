@@ -1,0 +1,72 @@
+# https://docs.datastax.com/en/cql-oss/3.x/cql/cql_using/useInsertLWT.html
+
+- name: Copy JMX Prometheus
+  copy:
+    src: "{{ item }}"
+    dest: "/usr/local/apache-cassandra/{{ item }}"
+  register: copy_jmx_prometheus
+  with_items:
+    - "cassandra.yml"
+    - "jmx_prometheus_javaagent-1.2.0.jar"
+  when: inventory_hostname in groups['workers']
+
+
+- name: Disable Local JMX
+  replace:
+    dest: "{{ item.fn }}"
+    regexp: "{{ item.regexp }}"
+    replace: "{{ item.replace }}"
+  register: disable_local_jmx
+  with_items:
+    - { fn: "/usr/local/apache-cassandra/conf/cassandra-env.sh", regexp: "^    LOCAL_JMX=*", replace: "    LOCAL_JMX=no" }
+  when: inventory_hostname in groups['workers']
+
+
+- name: Enable JMX Prometheus
+  lineinfile:
+    path: "{{ item.fn }}"
+    line: "{{ item.line }}"
+    state: "{{ item.state }}"
+  register: enable_jmx_prometheus
+  with_items:
+    - {
+        fn: "/usr/local/apache-cassandra/conf/cassandra-env.sh",
+        line: "JVM_OPTS=\"$JVM_OPTS -javaagent:/usr/local/apache-cassandra/jmx_prometheus_javaagent-1.2.0.jar=7070:/usr/local/apache-cassandra/cassandra.yml\"",
+        state: present
+      }
+  when: inventory_hostname in groups['workers']
+
+
+- name: Copy Cassandra Exporter Config
+  template: src={{ item.src }} dest={{ item.dest }} owner=root group=root mode=644 force=yes
+  register: copy_cassandra_exporter_config_file
+  with_items:
+    - { src: "prometheus.yml.j2",              dest: "/usr/local/etc/prometheus.yml" }
+  when: inventory_hostname in groups['monitor']
+
+
+- name: Reload and Start Cassandra Services
+  systemd:
+    daemon_reexec: true
+    daemon_reload: true
+    name: "{{ item }}"
+    enabled: true
+    state: restarted
+  register: restart_services
+  with_items:
+    - cassandra
+  when: inventory_hostname in groups['workers']
+
+
+- name: Reload and Start Exporter Services
+  systemd:
+    daemon_reexec: true
+    daemon_reload: true
+    name: "{{ item }}"
+    enabled: true
+    state: restarted
+  register: restart_services
+  with_items:
+    - prometheus
+  when: inventory_hostname in groups['monitor']
+

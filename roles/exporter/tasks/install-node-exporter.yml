@@ -1,0 +1,67 @@
+---
+- name: Check the Node Exporter Tar Files Already Exists
+  stat: path={{ _exporter.base_path }}/{{ item }}
+  register: check_tar_files
+  with_items:
+    - node_exporter-{{ _exporter.node.version }}.linux-amd64.tar.gz
+
+
+- name: Check the Prometheus and Postgres Exporter Binary Files
+  stat: path=/usr/local/bin/{{ item }}
+  register: check_bin_files
+  with_items:
+    - node_exporter
+
+
+- name: Copy the Node Exporter Tar Files
+  copy: src={{ item }} dest={{ _exporter.base_path }}/{{ item }} mode=0644 owner=root group=root
+  register: copy_tar_files
+  with_items:
+    - node_exporter-{{ _exporter.node.version }}.linux-amd64.tar.gz
+  when: not ( check_tar_files.results | map( attribute='stat.exists') ) is all
+
+
+- name: Untar the Node Exporter Tar Files
+  shell: tar -C {{ _exporter.base_path }} -xf {{ _exporter.base_path }}/{{ item }}
+  args:
+    executable: /bin/bash
+  with_items:
+    - node_exporter-{{ _exporter.node.version }}.linux-amd64.tar.gz
+  when: not ( check_bin_files.results | map( attribute='stat.exists') ) is all
+
+
+- name: Copy Binary of the Node Exporter into /usr/local/bin Directory
+  shell: cp -f {{ _exporter.base_path }}/{{ item.src }} /usr/local/bin/{{ item.dest }}
+  args:
+    executable: /bin/bash
+  with_items:
+    - { src: "node_exporter-{{ _exporter.node.version }}.linux-amd64/node_exporter",  dest: "node_exporter" }
+  when: not ( check_bin_files.results | map( attribute='stat.exists') ) is all
+
+
+- name: Copy Node Exporter Systemd File
+  template: src={{ item.src }} dest={{ item.dest }} owner=root group=root mode=644 force=yes
+  register: copy_systemd_file
+  with_items:
+    - { src: "node_exporter.systemd.j2",   dest: "/etc/systemd/system/node_exporter.service" }
+    # - { src: "prometheus.yml.j2",              dest: "/usr/local/etc/prometheus.yml" }
+    # - { src: "prometheus.systemd.j2",          dest: "/etc/systemd/system/prometheus.service" }
+  when: not ( check_bin_files.results | map( attribute='stat.exists') ) is all
+
+
+- name: Reload and Start Node Exporter Services
+  systemd:
+    daemon_reexec: true
+    daemon_reload: true
+    name: "{{ item }}"
+    enabled: true
+    state: started
+  register: start_services
+  with_items:
+    - node_exporter
+# - prometheus
+
+
+# https://jhooq.com/prometheous-grafan-setup/
+
+

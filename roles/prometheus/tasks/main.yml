@@ -1,0 +1,41 @@
+---
+- name: Check OS ( Grafana & Prometheus )
+  fail: msg="Not a Red Hat based system!"
+  when: ( ansible_os_family != 'RedHat' or ansible_os_family != 'CentOS' or  ansible_os_family != 'Rocky' ) and inventory_hostname in groups['monitor']
+
+
+- name: Install GO Language
+  import_tasks: install-go.yml
+  tags: install, setup
+  when: (( go is defined and go == true ) or ( prometheus_all is defined and prometheus_all == true )) and inventory_hostname in groups['monitor']
+
+
+- name: Install Pip Modules
+  import_tasks: install-pip.yml
+  tags: install, setup
+  when: (( pip is defined and pip == true ) or ( prometheus_all is defined and prometheus_all == true )) and inventory_hostname in groups['monitor']
+
+
+- name: Install Prometheus
+  import_tasks: install-prometheus.yml
+  tags: install, setup
+  when: (( prometheus is defined and prometheus == true ) or ( prometheus_all is defined and prometheus_all == true )) and inventory_hostname in groups['monitor']
+
+
+- name: Uninstall Prometheus
+  import_tasks: uninstall-prometheus.yml
+  tags: uninstall, remove
+  when: (( prometheus is defined and prometheus == true ) or ( prometheus_all is defined and prometheus_all == true )) and inventory_hostname in groups['monitor']
+
+
+- name: Uninstall Pip Modules
+  import_tasks: uninstall-pip.yml
+  tags: uninstall, remove
+  when: (( pip is defined and pip == true ) or ( prometheus_all is defined and prometheus_all == true )) and inventory_hostname in groups['monitor']
+
+
+- name: Uninstall GO language
+  import_tasks: uninstall-go.yml
+  tags: uninstall, remove
+  when: (( go is defined and go == true ) or ( prometheus_all is defined and prometheus_all == true )) and inventory_hostname in groups['monitor']
+

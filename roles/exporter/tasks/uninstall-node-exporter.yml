@@ -1,0 +1,24 @@
+---
+- name: Stop and Disable Node Exporter Services
+  systemd:
+    daemon_reexec: true
+    daemon_reload: true
+    name: "{{ item }}"
+    enabled: false
+    state: stopped
+  ignore_errors: true
+  register: stop_exporter_services
+  with_items:
+    - node_exporter
+
+
+- name: Delete the Node_Exporter Config and Binary Files
+  file: path={{ item.dest }} state=absent
+  ignore_errors: true
+  register: delete_config_files
+  with_items:
+    - { src: "node_exporter.systemd.j2",   dest: "/etc/systemd/system/node_exporter.service" }
+    - { src: "node_exporter binary",       dest: "/usr/local/bin/node_exporter" }
+    - { src: "node_exporter tar file",     dest: "/root/node_exporter-{{ _exporter.node.version }}.{{ _exporter.node.version }}.linux-amd64" }
+    - { src: "node_exporter directory",    dest: "/root/node_exporter-{{ _exporter.node.version }}.{{ _exporter.node.version }}.linux-amd64" }
+
