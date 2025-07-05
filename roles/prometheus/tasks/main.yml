@@ -1,7 +1,12 @@
 ---
 - name: Check OS ( Grafana & Prometheus )
   fail: msg="Not a Red Hat based system!"
-  when: ( ansible_os_family != 'RedHat' or ansible_os_family != 'CentOS' or  ansible_os_family != 'Rocky' ) and inventory_hostname in groups['monitor']
+  when: ansible_os_family != 'RedHat' or ansible_os_family != 'CentOS' or  ansible_os_family != 'Rocky'
+
+
+- name: Set Facts for Package Name and List and Network Range
+  import_tasks: set-facts.yml
+  tags: testfact, install, uninstall, setup, remove, verify, create, delete, start, stop, enable, disable, config, check
 
 
 - name: Install GO Language
@@ -20,6 +25,12 @@
   import_tasks: install-prometheus.yml
   tags: install, setup
   when: (( prometheus is defined and prometheus == true ) or ( prometheus_all is defined and prometheus_all == true )) and inventory_hostname in groups['monitor']
+
+
+- name: Config MinIO Metrics
+  import_tasks: config-minio-metrics.yml
+  tags: config, setup, install
+  when: ( minio is defined and minio == true ) and inventory_hostname in groups['monitor']
 
 
 - name: Uninstall Prometheus

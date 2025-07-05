@@ -4,7 +4,7 @@ ANSIBLE_HOST_PASS="changeme"
 ANSIBLE_TARGET_PASS="changeme"
 
 
-VIRT_ENV=KVM
+VIRT_ENV=VMware
 
 ifeq ($(VIRT_ENV),VMware)
         BOOT_CMD="powered-on"

@@ -1,0 +1,16 @@
+---
+- name: Create AlertManager Group
+  group: name=alertmanager state=present system=true
+
+
+- name: Create AlertManager User
+  user: name=alertmanager group=alertmanager shell=/sbin/nologin create_home=no system=true state=present
+
+
+- name: Set AlertManager Data Directory
+  file: path=/etc/alertmanager/templates state=directory owner=alertmanager group=alertmanager
+
+
+- name: Set AlertManager Library Directory
+  file: path=/var/lib/alertmanager state=directory owner=alertmanager group=alertmanager
+

@@ -1,6 +1,6 @@
 ---
 - name: Check if the GO File Already Exists
-  stat: path={{ _go.base_path }}/go{{ _go.major_version }}.{{ _go.minor_version }}.{{ _go.patch_version }}.linux-amd64.tar.gz
+  stat: path={{ _go.base_path }}/go{{ go_version }}.linux-amd64.tar.gz
   register: check_go_file
 
 
@@ -10,13 +10,13 @@
 
 
 - name: Copy the GO File
-  copy: src=go{{ _go.major_version }}.{{ _go.minor_version }}.{{ _go.patch_version }}.linux-amd64.tar.gz dest={{ _go.base_path }}/go{{ _go.major_version }}.{{ _go.minor_version }}.{{ _go.patch_version }}.linux-amd64.tar.gz mode=0644 owner=root group=root
+  copy: src=go{{ _go.major_version }}.{{ go_version }}.linux-amd64.tar.gz dest={{ _go.base_path }}/go{{ go_version }}.linux-amd64.tar.gz mode=0644 owner=root group=root
   register: copy_go_file
   when: check_go_file.stat.exists != True
 
 
 - name: Download GO File if Copy Fails
-  shell: wget https://dl.google.com/go/go{{ _go.major_version }}.{{ _go.minor_version }}.{{ _go.patch_version }}.linux-amd64.tar.gz -P {{ _go.base_path }}
+  shell: wget https://dl.google.com/go/go{{ go_version }}.linux-amd64.tar.gz -P {{ _go.base_path }}
   args:
     executable: /bin/bash
   when: copy_go_file is not succeeded
@@ -27,14 +27,14 @@
 #    url: "{{ item.url }}"
 #    dest: "{{ item.dest }}"
 #  with_items:
-#    - { url: "{{ _go.download_url }}/go{{ _go.major_version }}.{{ _go.minor_version }}.{{ _go.patch_version }}.linux-amd64.tar.gz",
-#        dest: "{{ local_dir }}/roles/grafana/files/go{{ _go.major_version }}.{{ _go.minor_version }}.{{ _go.patch_version }}.linux-amd64.tar.gz" }
+#    - { url: "{{ _go.download_url }}/go{{ go_version }}.linux-amd64.tar.gz",
+#        dest: "{{ local_dir }}/roles/grafana/files/go{{ go_version }}.linux-amd64.tar.gz" }
 #  when: copy_go_file is not succeeded
 
 
 - name: Untar GO File
   # become: true
-  shell: tar -C /usr/local -xf {{ _go.base_path }}/go{{ _go.major_version }}.{{ _go.minor_version }}.{{ _go.patch_version }}.linux-amd64.tar.gz
+  shell: tar -C /usr/local -xf {{ _go.base_path }}/go{{ go_version }}.linux-amd64.tar.gz
   args:
     executable: /bin/bash
   when: check_go_bin.stat.exists != True

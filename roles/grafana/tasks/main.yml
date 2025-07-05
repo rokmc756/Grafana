@@ -4,6 +4,11 @@
   when: ansible_os_family != 'RedHat' or ansible_os_family != 'CentOS' or  ansible_os_family != 'Rocky'
 
 
+- name: Set Facts for Package Name and List and Network Range
+  import_tasks: set-facts.yml
+  tags: testfact, install, uninstall, setup, remove, verify, create, delete, start, stop, enable, disable, check
+
+
 - name: Install GO Language
   import_tasks: install-go.yml
   tags: install, delete
