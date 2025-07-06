@@ -1,3 +1,3 @@
 ---
-- debug: msg="{{ Let's upgrade grafana }}"
+- debug: msg="{{ Prepare to upgrade grafana }}"
 

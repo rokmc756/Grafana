@@ -76,7 +76,7 @@ _alertmanager:
   download_url: "https://github.com/prometheus/alertmanager/releases/download"
 
 
-_wrap:
+_warp:
   base_path: /root
   major_version: 1
   minor_version: 1
@@ -115,6 +115,7 @@ _exporter:
   graphite:
     version: "0.16.0"
     download_url: "https://github.com/prometheus/graphite_exporter/releases/download"
+
 
 _mc:
   release_date: 20250521015954.0.0-1

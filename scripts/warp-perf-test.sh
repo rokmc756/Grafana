@@ -7,8 +7,8 @@
 # --secret-key changeme --duration 1m --objects 1000 --concurrent 16
 
 # OK
-# /usr/bin/warp mixed --host minio-api.jtest.pivotal.io \
-# --access-key minioadmin --secret-key changeme --autoterm
+/usr/bin/warp mixed --host minio-api.jtest.pivotal.io \
+--access-key minioadmin --secret-key changeme --autoterm
 
 # Bad Request after a few minute. Maybe due to too many concurrent
 #/usr/bin/warp mixed \
@@ -20,11 +20,11 @@
 #  --concurrent 64
 
 
-/usr/bin/warp mixed \
-  --host minio-api.jtest.pivotal.io \
-  --duration 120s \
-  --obj.size 24M \
-  --access-key=minioadmin \
-  --secret-key=changeme \
-  --concurrent 12
+#/usr/bin/warp mixed \
+#  --host minio-api.jtest.pivotal.io \
+#  --duration 120s \
+#  --obj.size 24M \
+#  --access-key=minioadmin \
+#  --secret-key=changeme \
+#  --concurrent 12
 

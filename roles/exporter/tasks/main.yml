@@ -15,16 +15,16 @@
   when: (( node is defined and node == true ) or ( exporter_all is defined and exporter_all == true )) and inventory_hostname in groups['workers']
 
 
-- name: Uninstall Node Exporter
-  import_tasks: uninstall-node-exporter.yml
-  tags: uninstall, delete
-  when: (( node is defined and node == true ) or ( exporter_all is defined and exporter_all == true )) and inventory_hostname in groups['workers']
-
-
 - name: Install Cassandra Exporter
   import_tasks: install-cassandra-exporter.yml
   tags: install, create
   when: (( cassandra is defined and cassandra == true ) or ( exporter_all is defined and exporter_all == true ))
+
+
+- name: Uninstall Node Exporter
+  import_tasks: uninstall-node-exporter.yml
+  tags: uninstall, delete
+  when: (( node is defined and node == true ) or ( exporter_all is defined and exporter_all == true )) and inventory_hostname in groups['workers']
 
 
 - name: Uninstall Cassandra Exporter

@@ -7,6 +7,7 @@
         go_download_version: "{{ _go.major_version }}.{{ _go.minor_version }}.{{ _go.patch_version }}"
         grafana_download_version: "{{ _grafana.major_version }}.{{ _grafana.minor_version }}.{{ _grafana.patch_version }}"
         prometheus_download_version: "{{ _prometheus.major_version }}.{{ _prometheus.minor_version }}.{{ _prometheus.patch_version }}"
+        warp_download_version: "{{ _warp.major_version }}.{{ _warp.minor_version }}.{{ _warp.patch_version }}"
         local_dir: "/home/jomoon/Grafana"
       get_url:
         url: "{{ item.url }}"
@@ -38,5 +39,11 @@
             dest: "{{ local_dir }}/roles/prometheus/files/collectd_exporter-{{ _exporter.collectd.version }}.linux-amd64.tar.gz" }
         - { url: "{{ _exporter.graphite.download_url }}/v{{ _exporter.graphite.version }}/graphite_exporter-{{ _exporter.graphite.version }}.linux-amd64.tar.gz",
             dest: "{{ local_dir }}/roles/prometheus/files/graphite_exporter-{{ _exporter.graphite.version }}.linux-amd64.tar.gz" }
+        - { url: "{{ _warp.download_url }}/v{{ warp_download_version }}/warp_Linux_x86_64.rpm",
+            dest: "{{ local_dir }}/roles/grafana/files/warp_Linux_x86_64.rpm" }
       tags: download
+
+#  wget https://github.com/minio/warp/releases/download/v1.1.6/warp_Linux_x86_64.rpm
+
+
 

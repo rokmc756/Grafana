@@ -1,0 +1,28 @@
+---
+- name: Check the Warp Package File Already Exists
+  stat: path={{ _warp.base_path }}/{{ item }}
+  register: check_tar_files
+  with_items:
+    - warp_Linux_x86_64.rpm
+
+
+- name: Check the Warp Binary Files
+  stat: path=/usr/bin/{{ item }}
+  register: check_bin_files
+  with_items:
+    - warp
+
+- name: Copy the Warp Packgae Files
+  copy: src={{ item }} dest={{ _warp.base_path }}/{{ item }} mode=0644 owner=root group=root
+  register: copy_tar_files
+  with_items:
+    - warp_Linux_x86_64.rpm
+  when: not ( check_tar_files.results | map( attribute='stat.exists') ) is all
+
+
+- name: Install the Warp Package Files
+  package: name={{ _warp.base_path }}/{{ item }} state=present disable_gpg_check=true
+  register: copy_tar_files
+  with_items:
+    - warp_Linux_x86_64.rpm
+
