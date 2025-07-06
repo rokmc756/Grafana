@@ -1,4 +1,5 @@
 ---
+
 - name: Install MinIO Client ( mcli ) Package
   import_tasks: install-mcli-pkgs.yml
 
@@ -17,9 +18,9 @@
 
 - name: Scraps MinIO Cluster Metrics
   shell: |
-    echo "" >> /usr/local/etc/prometheus.yml
-    echo "####  Scraps MinIO Cluster Metrics  ####" >> /usr/local/etc/prometheus.yml
-    mcli admin prometheus generate myminio | sed 1d | sed -e '1,$ s/^/  /g' >> /usr/local/etc/prometheus.yml
+    echo "" >> /etc/prometheus/prometheus.yml
+    echo "####  Scraps MinIO Cluster Metrics  ####" >> /etc/prometheus/prometheus.yml
+    mcli admin prometheus generate myminio | sed 1d | sed -e '1,$ s/^/  /g' | sed '$ s/$/\n    honor_timestamps: false/' >> /etc/prometheus/prometheus.yml
   register: scrap_minio_cluster_metrics
   args:
     executable: /bin/bash
@@ -30,9 +31,9 @@
 
 - name: Scraps MinIO Nodes Metrics
   shell: |
-    echo "" >> /usr/local/etc/prometheus.yml
-    echo "####  Scraps MinIO Nodes Metrics  ####" >> /usr/local/etc/prometheus.yml
-    mcli admin prometheus generate myminio node | sed 1d | sed -e '1,$ s/^/  /g' >> /usr/local/etc/prometheus.yml
+    echo "" >> /etc/prometheus/prometheus.yml
+    echo "####  Scraps MinIO Nodes Metrics  ####" >> /etc/prometheus/prometheus.yml
+    mcli admin prometheus generate myminio node | sed 1d | sed -e '1,$ s/^/  /g' | sed '$ s/$/\n    honor_timestamps: false/' >> /etc/prometheus/prometheus.yml
   register: scrap_minio_nodes_metrics
   args:
     executable: /bin/bash
@@ -43,9 +44,9 @@
 
 - name: Scraps MinIO Buckets Metrics
   shell: |
-    echo "" >> /usr/local/etc/prometheus.yml
-    echo "####  Scraps MinIO Buckets Metrics  ####" >> /usr/local/etc/prometheus.yml
-    mcli admin prometheus generate myminio bucket | sed 1d | sed -e '1,$ s/^/  /g' >> /usr/local/etc/prometheus.yml
+    echo "" >> /etc/prometheus/prometheus.yml
+    echo "####  Scraps MinIO Buckets Metrics  ####" >> /etc/prometheus/prometheus.yml
+    mcli admin prometheus generate myminio bucket | sed 1d | sed -e '1,$ s/^/  /g' | sed '$ s/$/\n    honor_timestamps: false/' >> /etc/prometheus/prometheus.yml
   register: scrap_minio_buckets_metrics
   args:
     executable: /bin/bash
@@ -56,34 +57,15 @@
 
 - name: Scraps MinIO Resources Metrics
   shell: |
-    echo "" >> /usr/local/etc/prometheus.yml
-    echo "####  Scraps MinIO Resources Metrics  ####" >> /usr/local/etc/prometheus.yml
-    mcli admin prometheus generate myminio resource | sed 1d | sed -e '1,$ s/^/  /g' >> /usr/local/etc/prometheus.yml
+    echo "" >> /etc/prometheus/prometheus.yml
+    echo "####  Scraps MinIO Resources Metrics  ####" >> /etc/prometheus/prometheus.yml
+    mcli admin prometheus generate myminio resource | sed 1d | sed -e '1,$ s/^/  /g' | sed '$ s/$/\n    honor_timestamps: false/' >> /etc/prometheus/prometheus.yml
   register: scrap_minio_resources_metrics
   args:
     executable: /bin/bash
   environment:
     PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
 - debug: msg="{{ scrap_minio_resources_metrics }}"
-
-
-- name: Scraps MinIO Custom Buckets Metrics
-  shell: |
-    echo "" >> /usr/local/etc/prometheus.yml
-    echo "####  Scraps MinIO Custom Buckets ( {{ item.bn }} ) Metrics  ####" >> /usr/local/etc/prometheus.yml
-    mcli admin prometheus generate myminio api --bucket {{ item.bn }} --api-version v3 | \
-    sed 1d | sed -e '1,$ s/^/  /g' | sed -e '1,$ s/minio-job-api/minio-job-api-{{ item.bn }}/g' \
-    >> /usr/local/etc/prometheus.yml
-  register: scrap_minio_custom_buckets_metrics
-  args:
-    executable: /bin/bash
-  environment:
-    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
-  with_items:
-    - { bn: "jtest-bucket01" }
-    - { bn: "jtest-bucket02" }
-    - { bn: "jtest-bucket03" }
-- debug: msg="{{ scrap_minio_custom_buckets_metrics }}"
 
 
 - name: Reload and Restart Prometheus Services

@@ -1,0 +1,12 @@
+---
+- name: Remove Prometheus User
+  user:
+    name: prometheus
+    state: absent
+    remove: yes
+
+
+- name: Remove Prometheus Group
+  group: name=prometheus state=absent
+
+

@@ -1,6 +1,6 @@
 ---
 - name: Check if the GO File Already Exists
-  stat: path={{ _go.base_path }}/go{{ _go.major_version }}.{{ _go.minor_version }}.{{ _go.patch_version }}.linux-amd64.tar.gz
+  stat: path={{ _go.base_path }}/go{{ go_version }}.linux-amd64.tar.gz
   register: check_go_file
 
 
@@ -10,7 +10,7 @@
 
 
 - name: Delete the GO File
-  file: path={{ _go.base_path }}/go{{ _go.major_version }}.{{ _go.minor_version }}.{{ _go.patch_version }}.linux-amd64.tar.gz state=absent
+  file: path={{ _go.base_path }}/go{{ go_version }}.linux-amd64.tar.gz state=absent
   register: delete_go_file
   when: check_go_file.stat.exists == True
 

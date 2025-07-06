@@ -1,0 +1,15 @@
+---
+- name: Create Postgres Group
+  group: name=postgres state=present
+
+
+- name: Create Postgres User
+  user:
+    name: postgres
+    state: present
+    password: "{{ pgsql.user_password | password_hash('sha512','A512') }}"
+    shell: /bin/bash
+    group: postgres
+    createhome: yes
+    home: "/home/postgres"
+

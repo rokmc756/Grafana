@@ -1,0 +1,25 @@
+---
+- name: Kill Processes Hold On User Directory
+  become_user: root
+  shell: |
+    {{ item }}
+    sleep 3
+  register: kill_user_processes
+  until: kill_user_processes is succeeded
+  retries: 5
+  with_items:
+    - "nohup pkill -U postgres"
+    - "nohup fuser -k /home/postgres"
+
+
+- name: Remove Postgres User
+  user:
+    name: postgres
+    state: absent
+    remove: yes
+
+
+- name: Remove Postgres Group
+  group: name=postgres state=absent
+
+

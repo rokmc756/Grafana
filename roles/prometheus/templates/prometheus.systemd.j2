@@ -1,14 +1,21 @@
 [Unit]
-Description=Prometheus Server
-After=network.target
+Description=Prometheus
+Documentation=https://prometheus.io/docs/introduction/overview/
+Wants=network-online.target
+After=network-online.target
 
 [Service]
 Type=simple
-Restart=always
-User=root
-Group=root
-# Environment=DATA_SOURCE_NAME=postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable
-ExecStart=/usr/local/bin/prometheus --config.file=/usr/local/etc/prometheus.yml
+User=prometheus
+Group=prometheus
+ExecStart=/usr/local/bin/prometheus \
+  --config.file /etc/prometheus/prometheus.yml \
+  --storage.tsdb.path /var/lib/prometheus \
+  --web.console.templates=/etc/prometheus/consoles \
+  --web.console.libraries=/etc/prometheus/console_libraries
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=on-failure
 
 [Install]
 WantedBy=multi-user.target
+

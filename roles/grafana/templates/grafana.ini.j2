@@ -89,8 +89,15 @@ read_timeout = 0
 # host = localhost:5432
 # name = pgwatch2_grafana
 # user = pgwatch2_grafana
-# If the password contains # or ; you have to wrap it with triple quotes. Ex """#password;"""
+
+type = postgres
+host = localhost:5432
+name = grafana
+user = grafana
 password = changeme
+
+# If the password contains # or ; you have to wrap it with triple quotes. Ex """#password;"""
+# password = changeme
 #
 # Use either URL or the previous fields to configure the database
 # Example: mysql://user:secret@host:port/database

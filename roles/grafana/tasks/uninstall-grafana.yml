@@ -7,7 +7,6 @@
     enabled: false
     state: stopped
   register: stop_grafana_services
-  ignore_errors: true
   with_items:
     - grafana-server
     - influxdb
@@ -16,8 +15,7 @@
 - name: Uninstall Dependent and Grafana RPM Packages
   package:
     name: "{{ item }}"
-    state: present
-    # skip_broken: yes
+    state: absent
   register: uninstall_pkgs
   ignore_errors: true
   async: 120
@@ -32,11 +30,13 @@
 - name: Delete the Config Files
   file: path={{ item.dest }} state=absent
   register: delete_config_files
-  ignore_errors: true
   with_items:
-    - { src: "grafana.ini.j2",       dest: "/etc/grafana/grafana.ini" }
-    - { src: "influxdata.repo.j2",   dest: "/etc/yum.repos.d/influxdata.repo" }
-    - { src: "grafana.crt",          dest: "/etc/grafana/grafana.crt" }
-    - { src: "grafana.key",          dest: "/etc/grafana/grafana.key" }
-    - { src: "grafana.csr",          dest: "/etc/grafana/grafana.csr" }
+    - { dest: "/etc/grafana/grafana.ini" }
+    - { dest: "/etc/yum.repos.d/influxdata.repo" }
+    - { dest: "/etc/grafana/grafana.crt" }
+    - { dest: "/etc/grafana/grafana.key" }
+    - { dest: "/etc/grafana/grafana.csr" }
+    - { dest: "/etc/grafana" }
+    - { dest: "/var/lib/grafana" }
+    - { dest: "/var/log/grafana" }
 

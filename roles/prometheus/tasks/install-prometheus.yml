@@ -27,7 +27,7 @@
 
 
 - name: Copy the Prometheus Tar Files
-  copy: src={{ item }} dest={{ _prometheus.base_path }}/{{ item }} mode=0644 owner=root group=root
+  copy: src={{ item }} dest={{ _prometheus.base_path }}/{{ item }} mode=0644 owner=prometheus group=prometheus
   register: copy_tar_files
   with_items:
     - prometheus-{{ prometheus_version }}.linux-amd64.tar.gz
@@ -53,11 +53,26 @@
 
 
 - name: Copy the Grafana and Prometheus Systemd File
-  template: src={{ item.src }} dest={{ item.dest }} owner=root group=root mode=644 force=yes
+  template: src={{ item.src }} dest={{ item.dest }} owner={{ item.owner }} group={{ item.group }} mode=644 force=yes
   register: copy_systemd_file
   with_items:
-    - { src: "prometheus.yml.j2",              dest: "/usr/local/etc/prometheus.yml" }
-    - { src: "prometheus.systemd.j2",          dest: "/etc/systemd/system/prometheus.service" }
+    - { src: "prometheus.systemd.j2",          dest: "/etc/systemd/system/prometheus.service", owner: root, group: root }
+  when: not ( check_bin_files.results | map( attribute='stat.exists') ) is all
+#  - { src: "prometheus.yml.j2",              dest: "/etc/prometheus/prometheus.yml", owner: prometheus, group: prometheus }
+
+
+- name: Copy Prometheus Binary and Config into /usr/local/bin and /etc/prometheus Directory
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: "prometheus"
+    group: "prometheus"
+    mode: "{{ item.perm }}"
+    remote_src: yes
+  with_items:
+    - { src: "{{ _prometheus.base_path }}/prometheus-{{ prometheus_version }}.linux-amd64/prometheus", dest: "/usr/local/bin/prometheus", user: "prometheus", group: "prometheus", perm: "0755" }
+    - { src: "{{ _prometheus.base_path }}/prometheus-{{ prometheus_version }}.linux-amd64/promtool", dest: "/usr/local/bin/promtool", user: "prometheus", group: "prometheus", perm: "0755" }
+    - { src: "{{ _prometheus.base_path }}/prometheus-{{ prometheus_version }}.linux-amd64/prometheus.yml", dest: "/etc/prometheus/prometheus.yml", user: "prometheus", group: "prometheus", perm: "0644" }
   when: not ( check_bin_files.results | map( attribute='stat.exists') ) is all
 
 

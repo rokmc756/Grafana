@@ -1,0 +1,17 @@
+---
+- name: Create Prometheous Group
+  group: name=prometheus state=present system=true
+
+
+- name: Create Prometheus User
+  user: name=prometheus group=prometheus create_home=yes system=true state=present
+  # user: name=prometheus group=prometheus shell=/sbin/nologin create_home=no system=true state=present
+
+
+- name: Set Prometheus Config Directory
+  file: path=/etc/prometheus state=directory owner=prometheus group=prometheus
+
+
+- name: Set Prometheus Data Directory
+  file: path=/var/lib/prometheus state=directory owner=prometheus group=prometheus
+

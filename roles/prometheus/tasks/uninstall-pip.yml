@@ -35,7 +35,7 @@
     PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
 
 
-- name: Install Pip3 Setup Tools Rust
+- name: Uninstall Pip3 Setup Tools Rust
   shell: |
     pip3 install setuptools_rust
   register: install_pip3_setuptools_rust

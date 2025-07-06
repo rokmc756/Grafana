@@ -10,7 +10,7 @@
 
 
 - name: Copy the GO File
-  copy: src=go{{ _go.major_version }}.{{ go_version }}.linux-amd64.tar.gz dest={{ _go.base_path }}/go{{ go_version }}.linux-amd64.tar.gz mode=0644 owner=root group=root
+  copy: src=go{{ go_version }}.linux-amd64.tar.gz dest={{ _go.base_path }}/go{{ go_version }}.linux-amd64.tar.gz mode=0644 owner=root group=root
   register: copy_go_file
   when: check_go_file.stat.exists != True
 
