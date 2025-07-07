@@ -16,6 +16,7 @@ WIP
 
 ## How to install Grafana / Prometheus / Exporters
 ```bash
+$ make pgsql        r=install    s=all
 $ make grafana       r=install    s=all
 $ make exporter      r=install    s=node
 $ make alertmanager  r=install    s=all
@@ -31,8 +32,8 @@ $ make alertmanager  r=uninstall  s=all
 $ make prometheus    r=uninstall  s=all
 $ make exporter      r=uninstall  s=node
 $ make grafana       r=uninstall  s=all
+$ make pgsql         r=uninstall  s=all
 ```
-
 
 ## Grafana URLs
 - Cassandra Web  : http://192.168.1.176:3030
