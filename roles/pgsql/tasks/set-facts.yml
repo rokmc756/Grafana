@@ -65,7 +65,7 @@
 
 - name: Define Fact of Package Names
   set_fact:
-    pgsql_pkg_name: "{{ common.pgsql_pkg_name }}-{{ pgsql.major_version }}.{{ pgsql.minor_version }}-{{ pgsql.patch_version }}.{{ pgsql.os_version }}"
+    pgsql_pkg_name: "{{ _common.pgsql_pkg_name }}-{{ _pgsql.major_version }}.{{ _pgsql.minor_version }}-{{ _pgsql.patch_version }}.{{ _pgsql.os_version }}"
 
 
 - name: Define Fact of Network Address

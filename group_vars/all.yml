@@ -12,11 +12,8 @@ _grafana:
   os_version: el9
   arch_type: x86_64
   bin_type: rpm
-  db_name: pgsql_testdb
-  db_user: jomoon
-  user: postgres
-  group: postgres
-  db_password: 'changeme'
+  admin_user: admin
+  admin_password: changeme
   home_dir: "/home/postgres"
   base_dir: "/root"
   domain: "jtest.pivotal.io"
@@ -57,7 +54,6 @@ _go:
 
 # prometheus-3.2.1.linux-amd64.tar.gz          -  https://prometheus.io/download/
 _prometheus:
-  # base_path: /root
   base_path: /tmp
   major_version: 3
   minor_version: 2
@@ -122,15 +118,6 @@ _mc:
   release_date: 20250521015954.0.0-1
 
 
-common:
-  sudo_user: jomoon
-  sudo_group: jomoon
-  sudo_user_home_dir: "/home/jomoon"
-  pgsql_pkg_name: "vmware-postgres{{ pgsql.major_version }}"
-  pgsql_bin_dir: "/opt/vmware/postgres/{{ pgsql.major_version }}/bin"
-  # pgsql_pkg_name: pivotal-postgres
-
-
 _ssl:
   ssl_dir: "/etc/grafana"
   ssl_days: 3660
@@ -161,6 +148,40 @@ jdk:
     minor_version: "0"
     patch_version: "2"
     download: false
+
+
+_pgsql:
+  cluster_name: jack-kr-pgsql
+  major_version: "17"
+  minor_version: ""
+  patch_version: ""
+  build_version: ""
+  os_version: el9
+  arch_type: x86_64
+  bin_type: rpm
+  db_name: grafana
+  db_user: grafana
+  db_password: 'changeme'
+  user: postgres
+  group: postgres
+  user_password: changeme
+  sudo_user_dir: "/home/jomoon"
+  home_dir: "/home/postgres"
+  base_dir: "/var/lib/pgsql"
+  domain: "jtest.pivotal.io"
+  repo_url: ""
+  download_url: ""
+  download: false
+  base_path: /root
+  # enable_ssl: true
+
+
+_common:
+  sudo_user: jomoon
+  sudo_group: jomoon
+  sudo_user_home_dir: "/home/jomoon"
+  pgsql_pkg_name: "vmware-postgres{{ _pgsql.major_version }}"
+  pgsql_bin_dir: "/opt/vmware/postgres/{{ _pgsql.major_version }}/bin"
 
 
 vmware:

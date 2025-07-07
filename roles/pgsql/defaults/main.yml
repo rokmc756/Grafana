@@ -18,7 +18,7 @@ rh10_python_pkgs: "python3.12-pip,python3.12-devel"
 
 
 delete_file_list:
-  - "/var/lib/pgsql/{{ pgsql.db_name }}"
+  - "/var/lib/pgsql/{{ _pgsql.db_name }}"
   - "/var/lib/pgsql/data"
   - "/var/lib/pgsql/backup"
   - "/var/lib/pgsql/backups"

@@ -7,7 +7,7 @@
   user:
     name: postgres
     state: present
-    password: "{{ pgsql.user_password | password_hash('sha512','A512') }}"
+    password: "{{ _pgsql.user_password | password_hash('sha512','A512') }}"
     shell: /bin/bash
     group: postgres
     createhome: yes

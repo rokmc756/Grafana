@@ -1,5 +1,5 @@
 ---
-- name: Check OS ( Grafana & Prometheus )
+- name: Check OS ( Grafana )
   fail: msg="Not a Red Hat based system!"
   when: ansible_os_family != 'RedHat' or ansible_os_family != 'CentOS' or  ansible_os_family != 'Rocky'
 

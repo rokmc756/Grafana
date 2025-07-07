@@ -7,8 +7,8 @@
   vars:
     ansible_python_interpreter: "{{ yum_python_version }}"
   with_items:
-    - postgresql{{ pgsql.major_version }}-server
-    - postgresql{{ pgsql.major_version }}
+    - postgresql{{ _pgsql.major_version }}-server
+    - postgresql{{ _pgsql.major_version }}
     - libpq5
 
 

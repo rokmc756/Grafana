@@ -76,7 +76,7 @@
 - name: Add SSL Configuration File to Authenticate SSL User into PGDG Postgres Database Server
   become_user: postgres
   lineinfile:
-    dest: "{{ pgsql.base_dir }}/{{ pgsql.major_version }}/data/{{ item.file }}"
+    dest: "{{ _pgsql.base_dir }}/{{ _pgsql.major_version }}/data/{{ item.file }}"
     line: "{{ item.line }}"
     state: "{{ item.state }}"
   with_items:
@@ -85,15 +85,15 @@
     - { file: "postgresql.conf",  line: "listen_addresses = '*'",                                                    state: present }
     - { file: "postgresql.conf",  line: "port = 5432",                                                               state: present }
     - { file: "postgresql.conf",  line: "ssl = on",                                                                  state: present }
-    - { file: "postgresql.conf",  line: "ssl_cert_file = '{{ pgsql.base_dir }}/certs/server.crt'",                   state: present }
-    - { file: "postgresql.conf",  line: "ssl_key_file = '{{ pgsql.base_dir }}/certs/server.key'",                    state: present }
+    - { file: "postgresql.conf",  line: "ssl_cert_file = '{{ _pgsql.base_dir }}/certs/server.crt'",                  state: present }
+    - { file: "postgresql.conf",  line: "ssl_key_file = '{{ _pgsql.base_dir }}/certs/server.key'",                   state: present }
   register: config_ssl_postgres
 
 
 - name: Stop Postgres Instance manually to Apply Systemd Unit
   become_user: postgres
   shell: |
-    /usr/pgsql-{{ pgsql.major_version }}/bin/pg_ctl stop -D {{ pgsql.base_dir }}/{{ pgsql.major_version }}/data -s -m fast
+    /usr/pgsql-{{ _pgsql.major_version }}/bin/pg_ctl stop -D {{ _pgsql.base_dir }}/{{ _pgsql.major_version }}/data -s -m fast
   register: stop_postgres_instance
 
 

@@ -2,11 +2,11 @@
 - name: Verify the State of Postgres Instance
   become_user: postgres
   shell: |
-    source {{ pgsql.base_dir }}/.bash_profile
-    /usr/pgsql-{{ pgsql.major_version }}/bin/pg_ctl -V
+    source {{ _pgsql.base_dir }}/.bash_profile
+    /usr/pgsql-{{ _pgsql.major_version }}/bin/pg_ctl -V
   register: verify_single_postgres_state
   args:
-    chdir: "{{ pgsql.base_dir }}"
+    chdir: "{{ _pgsql.base_dir }}"
     executable: /bin/bash
 
 

@@ -84,7 +84,7 @@ read_timeout = 0
 # name = grafana
 # user = root
 
-#
+
 # type = postgres
 # host = localhost:5432
 # name = pgwatch2_grafana
@@ -92,9 +92,9 @@ read_timeout = 0
 
 type = postgres
 host = localhost:5432
-name = grafana
-user = grafana
-password = changeme
+name = {{ _pgsql.db_name }}
+user = {{ _pgsql.db_user }}
+password = {{ _pgsql.db_password }}
 
 # If the password contains # or ; you have to wrap it with triple quotes. Ex """#password;"""
 # password = changeme
@@ -216,11 +216,10 @@ google_tag_manager_id =
 disable_initial_admin_creation = false
 
 # default admin user, created on startup
-admin_user = admin
+admin_user = {{ _grafana.admin_user }}
 
 # default admin password, can be changed before first start of grafana, or in profile settings
-# admin_password = admin
-admin_password = changeme
+admin_password = {{ _grafana.admin_password }}
 
 # used for signing
 secret_key = SW2YcwTIb9zpOOhoPsMm
